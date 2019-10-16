@@ -1,4 +1,5 @@
 package com.zhidian.dpadapter
+
 /**
  * 输入的屏幕尺寸、设计稿尺寸和需要生成尺寸的相关信息
  */

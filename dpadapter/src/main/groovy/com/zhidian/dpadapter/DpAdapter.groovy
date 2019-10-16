@@ -6,7 +6,7 @@ import org.gradle.api.Project
 import java.text.DecimalFormat
 
 /**
- * 自定义的 Gradle 插件
+ * 自定义的 Gradle 插件，用于生成适配特定屏幕宽度机型（dp）的尺寸资源文件
  */
 class DpAdapter implements Plugin<Project> {
 //    注册的生成尺寸文件的任务名
@@ -44,10 +44,16 @@ class DpAdapter implements Plugin<Project> {
         }
     }
 
+    /**
+     * 为 project 所在的 module 中生成参数 paramsInfo 所保存信息的尺寸相关文件（values-sw**dp/dimens.xml）
+     * @param project
+     * @param paramsInfo
+     */
     private void generateDimenResource(Project project, ParamsInfo paramsInfo) {
         File targetDir = new File(project.getProjectDir().getAbsolutePath() + "/src/main/res")
         println "Got project resource dir path: " + targetDir
-        File dimenDir = new File(targetDir, String.format(DIMEN_RESOURCE_DIR_NAME_FORMAT, paramsInfo.screenDp))
+        File dimenDir = new File(targetDir,
+                String.format(DIMEN_RESOURCE_DIR_NAME_FORMAT, paramsInfo.screenDp))
         if (!dimenDir.exists() && !dimenDir.mkdir()) {
             System.err.println("Create dimen dir failed!")
             return
@@ -63,6 +69,11 @@ class DpAdapter implements Plugin<Project> {
         generateDimenResource(defaultParamsInfo, defaultDimenFile)
     }
 
+    /**
+     * 读取参数指定的 ParamsInfo 中的信息，生成尺寸资源字符串到 destDimenFile 中
+     * @param paramsInfo
+     * @param destDimenFile
+     */
     private void generateDimenResource(ParamsInfo paramsInfo, File destDimenFile) {
         if (paramsInfo == null || destDimenFile == null) {
             System.err.println("Got generate params info or dest dimen file is null!")
@@ -82,6 +93,12 @@ class DpAdapter implements Plugin<Project> {
         Utils.writeTextToFile(gotDimenResource, destDimenFile)
     }
 
+    /**
+     * 生成单个 dimen 资源字符串，例：<dimen name="dpx_1">1dp</dimen>
+     * @param dimen 要生成的尺寸值
+     * @param scaleRatio 目标机型的屏幕宽度和设计稿宽度比例
+     * @return
+     */
     private static String getDimenItem(float dimen, float scaleRatio) {
         if (dimen >= 0 && scaleRatio > 0) {
             return String.format(DIMEN_ITEM_FORMAT,
