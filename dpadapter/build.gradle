@@ -1,0 +1,28 @@
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+group="com.zhidian.dpadapter"
+// 这里的 artifactId 由 module 名决定？
+version="1.0.0"
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    // 依赖 gradle Api，可以使用 gradle 提供的方法
+    implementation gradleApi()
+    // 依赖 groovy，可以使用 groovy 语言的语法
+    implementation localGroovy()
+}
+
+// 插件发布配置，由 maven 插件提供，所以上面需要 apply plugin: 'maven'
+uploadArchives {
+    repositories {
+        mavenDeployer {
+//            maven 仓库地址，这里先用本地仓库
+            repository(url: uri("../repo"))
+        }
+    }
+}
