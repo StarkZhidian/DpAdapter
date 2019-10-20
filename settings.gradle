@@ -1,3 +1,4 @@
 include ':dpadapter',
+        ':percent_layout',
         ':demo_app'
 rootProject.name='DpAdapter'
