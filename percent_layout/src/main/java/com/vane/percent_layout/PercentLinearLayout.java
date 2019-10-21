@@ -3,6 +3,7 @@ package com.vane.percent_layout;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -14,6 +15,7 @@ import androidx.annotation.Nullable;
  * Email: 1532033525@qq.com
  */
 public class PercentLinearLayout extends LinearLayout {
+    private static final String TAG = "PercentLinearLayout";
 
     public PercentLinearLayout(Context context) {
         super(context);
@@ -37,43 +39,38 @@ public class PercentLinearLayout extends LinearLayout {
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
-        // 如果宽度和高度有一个模式为 WRAP_CONTENT，则使用父类的测量方法，先确定当前类的宽高
-        if (widthMode == LayoutParams.WRAP_CONTENT || heightMode == LayoutParams.WRAP_CONTENT) {
+        boolean isMeasured = false;
+        // 如果宽度和高度有一个模式为 AT_MOST，则使用父类的测量方法，先确定当前 ViewGroup 的宽高
+        if (widthMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.AT_MOST ||
+                widthMode == MeasureSpec.UNSPECIFIED || heightMode == MeasureSpec.UNSPECIFIED) {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             width = getMeasuredWidth();
             height = getMeasuredHeight();
+            isMeasured = true;
         }
-        // 开始测量子 View
+        Log.d(TAG, "got width: " + width + ", height: " + height);
+        // 根据得到的容器宽高和子 View 的宽高比例更改子 View 的布局参数
         int childCount = getChildCount();
         View childView;
         LayoutParams lp;
-        int childWidthSpec;
-        int childHeightSpec;
         for (int i = 0; i < childCount; i++) {
             childView = getChildAt(i);
             lp = (LayoutParams) childView.getLayoutParams();
-            if (lp.widthPercent != 0) {
-                childWidthSpec = getChildMeasureSpec(
-                        MeasureSpec.makeMeasureSpec((int) (width * lp.widthPercent), MeasureSpec.EXACTLY),
-                        getPaddingLeft() + getPaddingRight(),
-                        (int) (width * lp.widthPercent));
-            } else {
-                childWidthSpec = getChildMeasureSpec(widthMeasureSpec,
-                        getPaddingLeft() + getPaddingRight(),
-                        lp.width);
+            if (lp.widthPercent > 0) {
+                lp.width = (int) (width * lp.widthPercent);
             }
-            if (lp.heightPercent != 0) {
-                childHeightSpec = getChildMeasureSpec(
-                        MeasureSpec.makeMeasureSpec((int) (height * lp.heightPercent), MeasureSpec.EXACTLY),
-                        getPaddingTop() + getPaddingBottom(),
-                        (int) (height * lp.heightPercent));
-            } else {
-                childHeightSpec = getChildMeasureSpec(heightMeasureSpec,
-                                getPaddingTop() + getPaddingBottom(),
-                                lp.height);
+            if (lp.heightPercent > 0) {
+                lp.height = (int) (height * lp.heightPercent);
             }
-            measureChild(childView, childWidthSpec, childHeightSpec);
         }
+        int gotWidthMeasureSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
+        int gotHeightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+        // 如果调用过 super.onMeasure，则直接调用 measureChildren 方法
+        if (isMeasured) {
+            measureChildren(gotWidthMeasureSpec, gotHeightMeasureSpec);
+        } else {
+        }
+        super.onMeasure(gotWidthMeasureSpec, gotHeightMeasureSpec);
     }
 
     @Override
@@ -102,8 +99,8 @@ public class PercentLinearLayout extends LinearLayout {
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
             TypedArray a = c.obtainStyledAttributes(attrs, R.styleable.PercentLinearLayout_Layout);
-            widthPercent = a.getFloat(R.styleable.PercentLinearLayout_Layout_width, 0);
-            heightPercent = a.getFloat(R.styleable.PercentLinearLayout_Layout_height, 0);
+            widthPercent = a.getFloat(R.styleable.PercentLinearLayout_Layout_width_percent, 0);
+            heightPercent = a.getFloat(R.styleable.PercentLinearLayout_Layout_height_percent, 0);
             a.recycle();
         }
 
