@@ -32,6 +32,26 @@ class ParamsInfo {
         return paramsInfo
     }
 
+    void screenDp(int dp) {
+        screenDp = dp
+    }
+
+    void designerDp(int dp) {
+        designerDp = dp
+    }
+
+    void startGenerateValue(float value) {
+        startGenerateValue = value
+    }
+
+    void endGenerateValue(float value) {
+        endGenerateValue = value
+    }
+
+    void generateInterval(float value) {
+        generateInterval = value
+    }
+
     @Override
     String toString() {
         return "screenDp: " + screenDp + ", designerDp: " + designerDp + ", startGenerateValue: " + startGenerateValue + ", endGenerateValue: " + endGenerateValue + ", generateInterval: " + generateInterval
