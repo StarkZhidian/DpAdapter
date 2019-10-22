@@ -10,6 +10,7 @@ import android.util.Log;
  */
 public class ViewUtils {
     private static final String TAG = "ViewUtils";
+    private static final int DEFAULT_DESIGNER_SCREEN_WIDTH = 360;
     private static Context app;
 
     public static void init(Context app) {
@@ -32,5 +33,9 @@ public class ViewUtils {
         float pxValue = dpValue * metrics.widthPixels / designerScreenWidth;
         Log.d(TAG, "got pxValue = [" + pxValue + "]");
         return pxValue;
+    }
+
+    public static float dp2px(float dpValue) {
+        return dp2px(dpValue, DEFAULT_DESIGNER_SCREEN_WIDTH);
     }
 }
