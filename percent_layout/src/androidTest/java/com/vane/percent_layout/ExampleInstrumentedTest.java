@@ -40,8 +40,17 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void testViewUtils() {
-        ViewUtils.init(InstrumentationRegistry.getInstrumentation().getContext());
-        float matchWidthValue = ViewUtils.dp2px(360, 360);
-        Log.d(TAG, "Got px value = [" + matchWidthValue + "]");
+        Context context = InstrumentationRegistry.getInstrumentation().getContext();
+        ViewUtils.init(context);
+        float matchWidthValue;
+        int screenWidth = context.getResources().getDisplayMetrics().widthPixels;
+        for (float i = 1; i < 361; i++) {
+            matchWidthValue = (int) ViewUtils.dp2px(i);
+            Log.d(TAG, "Got px value = [" + matchWidthValue + "], ratio = [" +
+                    (matchWidthValue / screenWidth) + "], should ratio = [" + (i / 360) + "]");
+            if (Math.abs(i / 360 - matchWidthValue / screenWidth) >= 0.001) {
+                throw new IllegalStateException();
+            }
+        }
     }
 }
