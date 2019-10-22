@@ -14,8 +14,10 @@ import androidx.annotation.Nullable;
  * Create by vane on 2019/10/20
  * Email: 1532033525@qq.com
  */
-public class PercentLinearLayout extends LinearLayout {
+public class PercentLinearLayout extends LinearLayout implements IPercentLayout {
     private static final String TAG = "PercentLinearLayout";
+
+    private MeasureDelegate measureDelegate = new MeasureDelegate(this);
 
     public PercentLinearLayout(Context context) {
         super(context);
@@ -35,42 +37,7 @@ public class PercentLinearLayout extends LinearLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        int height = MeasureSpec.getSize(heightMeasureSpec);
-        boolean isMeasured = false;
-        // 如果宽度和高度有一个模式为 AT_MOST，则使用父类的测量方法，先确定当前 ViewGroup 的宽高
-        if (widthMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.AT_MOST ||
-                widthMode == MeasureSpec.UNSPECIFIED || heightMode == MeasureSpec.UNSPECIFIED) {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-            width = getMeasuredWidth();
-            height = getMeasuredHeight();
-            isMeasured = true;
-        }
-        Log.d(TAG, "got width: " + width + ", height: " + height);
-        // 根据得到的容器宽高和子 View 的宽高比例更改子 View 的布局参数
-        int childCount = getChildCount();
-        View childView;
-        LayoutParams lp;
-        for (int i = 0; i < childCount; i++) {
-            childView = getChildAt(i);
-            lp = (LayoutParams) childView.getLayoutParams();
-            if (lp.widthPercent > 0) {
-                lp.width = (int) (width * lp.widthPercent);
-            }
-            if (lp.heightPercent > 0) {
-                lp.height = (int) (height * lp.heightPercent);
-            }
-        }
-        int gotWidthMeasureSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
-        int gotHeightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
-        // 如果调用过 super.onMeasure，则直接调用 measureChildren 方法
-        if (isMeasured) {
-            measureChildren(gotWidthMeasureSpec, gotHeightMeasureSpec);
-        } else {
-            super.onMeasure(gotWidthMeasureSpec, gotHeightMeasureSpec);
-        }
+        measureDelegate.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
@@ -91,17 +58,25 @@ public class PercentLinearLayout extends LinearLayout {
         return new LayoutParams(getContext(), attrs);
     }
 
-    public static class LayoutParams extends LinearLayout.LayoutParams {
+    @Override
+    public void callSuperOnMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
 
-        public float widthPercent;
-        public float heightPercent;
+    @Override
+    public void callMeasureChildren(int widthMeasureSpec, int heightMeasureSpec) {
+        measureChildren(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    public static class LayoutParams extends LinearLayout.LayoutParams implements IPercentLayoutParams {
+
+        private PercentInfo percentInfo;
 
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
-            TypedArray a = c.obtainStyledAttributes(attrs, R.styleable.PercentLinearLayout_Layout);
-            widthPercent = a.getFloat(R.styleable.PercentLinearLayout_Layout_width_percent, 0);
-            heightPercent = a.getFloat(R.styleable.PercentLinearLayout_Layout_height_percent, 0);
-            a.recycle();
+            percentInfo = PercentInfo.makeFromLayoutAttrs(c, attrs, R.styleable.PercentLayout_Layout,
+                    R.styleable.PercentLayout_Layout_width_percent,
+                    R.styleable.PercentLayout_Layout_height_percent);
         }
 
         public LayoutParams(int width, int height) {
@@ -114,12 +89,37 @@ public class PercentLinearLayout extends LinearLayout {
 
         public LayoutParams(LinearLayout.LayoutParams source) {
             super(source);
+            percentInfo = new PercentInfo();
         }
 
         public LayoutParams(LayoutParams source) {
             super(source);
-            widthPercent = source.widthPercent;
-            heightPercent = source.heightPercent;
+            percentInfo = new PercentInfo(source.getPercentInfo());
+        }
+
+        @Override
+        public PercentInfo getPercentInfo() {
+            return percentInfo;
+        }
+
+        @Override
+        public float getWidthPercent() {
+            return getPercentInfo().widthPercent;
+        }
+
+        @Override
+        public float getHeightPercent() {
+            return getPercentInfo().heightPercent;
+        }
+
+        @Override
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
+        @Override
+        public void setHeight(int height) {
+            this.height = height;
         }
     }
 }
