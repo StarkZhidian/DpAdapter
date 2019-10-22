@@ -69,8 +69,8 @@ public class PercentLinearLayout extends LinearLayout {
         if (isMeasured) {
             measureChildren(gotWidthMeasureSpec, gotHeightMeasureSpec);
         } else {
+            super.onMeasure(gotWidthMeasureSpec, gotHeightMeasureSpec);
         }
-        super.onMeasure(gotWidthMeasureSpec, gotHeightMeasureSpec);
     }
 
     @Override
