@@ -43,12 +43,14 @@ public class ExampleInstrumentedTest {
         Context context = InstrumentationRegistry.getInstrumentation().getContext();
         ViewUtils.init(context);
         float matchWidthValue;
+        // 设计稿的屏幕宽度为 360dp
+        int designerScreenWidth = 360;
         int screenWidth = context.getResources().getDisplayMetrics().widthPixels;
-        for (float i = 1; i < 361; i++) {
+        for (float i = 1; i <= designerScreenWidth; i++) {
             matchWidthValue = (int) ViewUtils.dp2px(i);
-            Log.d(TAG, "Got px value = [" + matchWidthValue + "], ratio = [" +
-                    (matchWidthValue / screenWidth) + "], should ratio = [" + (i / 360) + "]");
-            if (Math.abs(i / 360 - matchWidthValue / screenWidth) >= 0.001) {
+            Log.d(TAG, "dp = " + i + ", Got px value = [" + matchWidthValue + "], ratio = [" +
+                    (matchWidthValue / screenWidth) + "], should ratio = [" + (i / designerScreenWidth) + "]");
+            if (Math.abs(i / designerScreenWidth - matchWidthValue / screenWidth) >= 0.00001) {
                 throw new IllegalStateException();
             }
         }
