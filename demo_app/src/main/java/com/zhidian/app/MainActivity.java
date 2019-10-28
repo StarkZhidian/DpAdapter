@@ -12,6 +12,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DisplayMetricsUtils.adjustDisplayMetricsDensity(this);
-        setContentView(R.layout.display_metrics_layout);
+        setContentView(R.layout.activity_main);
     }
 }

@@ -1,8 +1,8 @@
 package com.vane.percent_layout;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
@@ -68,9 +68,7 @@ public class PercentFrameLayout extends FrameLayout implements IPercentLayout {
 
         public LayoutParams(@NonNull Context c, @Nullable AttributeSet attrs) {
             super(c, attrs);
-            info = PercentInfo.makeFromLayoutAttrs(c, attrs, R.styleable.PercentLayout_Layout,
-                    R.styleable.PercentLayout_Layout_width_percent,
-                    R.styleable.PercentLayout_Layout_height_percent);
+            info = PercentInfo.makeFromLayoutAttrs(c, attrs);
         }
 
         public LayoutParams(int width, int height) {
@@ -113,16 +111,6 @@ public class PercentFrameLayout extends FrameLayout implements IPercentLayout {
         }
 
         @Override
-        public float getWidthPercent() {
-            return info.widthPercent;
-        }
-
-        @Override
-        public float getHeightPercent() {
-            return info.heightPercent;
-        }
-
-        @Override
         public void setWidth(int width) {
             this.width = width;
         }
@@ -130,6 +118,34 @@ public class PercentFrameLayout extends FrameLayout implements IPercentLayout {
         @Override
         public void setHeight(int height) {
             this.height = height;
+        }
+
+        @Override
+        public void setMarginLeft(int marginLeft) {
+            this.leftMargin = marginLeft;
+        }
+
+        @Override
+        public void setMarginTop(int marginTop) {
+            this.topMargin = marginTop;
+        }
+
+        @Override
+        public void setMarginRight(int marginRight) {
+            this.rightMargin = marginRight;
+        }
+
+        @Override
+        public void setMarginBottom(int marginBottom) {
+            this.bottomMargin = marginBottom;
+        }
+
+        @Override
+        public void setViewPadding(View view, int paddingLeft, int paddingTop, int paddingRight, int paddingBottom) {
+            if (view == null) {
+                return;
+            }
+            view.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
         }
     }
 }

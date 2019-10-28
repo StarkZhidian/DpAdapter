@@ -74,9 +74,8 @@ public class PercentLinearLayout extends LinearLayout implements IPercentLayout 
 
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
-            percentInfo = PercentInfo.makeFromLayoutAttrs(c, attrs, R.styleable.PercentLayout_Layout,
-                    R.styleable.PercentLayout_Layout_width_percent,
-                    R.styleable.PercentLayout_Layout_height_percent);
+            percentInfo = PercentInfo.makeFromLayoutAttrs(c, attrs);
+            Log.d(TAG, "Got percentInfo: " + percentInfo.toString());
         }
 
         public LayoutParams(int width, int height) {
@@ -103,16 +102,6 @@ public class PercentLinearLayout extends LinearLayout implements IPercentLayout 
         }
 
         @Override
-        public float getWidthPercent() {
-            return getPercentInfo().widthPercent;
-        }
-
-        @Override
-        public float getHeightPercent() {
-            return getPercentInfo().heightPercent;
-        }
-
-        @Override
         public void setWidth(int width) {
             this.width = width;
         }
@@ -120,6 +109,34 @@ public class PercentLinearLayout extends LinearLayout implements IPercentLayout 
         @Override
         public void setHeight(int height) {
             this.height = height;
+        }
+
+        @Override
+        public void setMarginLeft(int marginLeft) {
+            this.leftMargin = marginLeft;
+        }
+
+        @Override
+        public void setMarginTop(int marginTop) {
+            this.topMargin = marginTop;
+        }
+
+        @Override
+        public void setMarginRight(int marginRight) {
+            this.rightMargin = marginRight;
+        }
+
+        @Override
+        public void setMarginBottom(int marginBottom) {
+            this.bottomMargin = marginBottom;
+        }
+
+        @Override
+        public void setViewPadding(View view, int paddingLeft, int paddingTop, int paddingRight, int paddingBottom) {
+            if (view == null) {
+                return;
+            }
+            view.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
         }
     }
 }

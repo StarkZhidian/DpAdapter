@@ -32,21 +32,8 @@ public class MeasureDelegate {
             isMeasured = true;
         }
         Log.d(TAG, "got width: " + width + ", height: " + height);
-        // 根据得到的容器宽高和子 View 的宽高比例更改子 View 的布局参数
-        int childCount = viewGroup.getChildCount();
-        View childView;
-        IPercentLayoutParams lp;
-        float percent;
-        for (int i = 0; i < childCount; i++) {
-            childView = viewGroup.getChildAt(i);
-            lp = (IPercentLayoutParams) childView.getLayoutParams();
-            if ((percent = lp.getWidthPercent()) > 0) {
-                lp.setWidth((int) (percent * width));
-            }
-            if ((percent = lp.getHeightPercent()) > 0) {
-                lp.setHeight((int) (percent * height));
-            }
-        }
+        changeChildViewLayoutParams(width, height);
+        // 重新构造父布局的宽高 MeasureSpec
         int gotWidthMeasureSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
         int gotHeightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
         // 如果调用过 super.onMeasure，则直接调用 measureChildren 方法
@@ -57,4 +44,71 @@ public class MeasureDelegate {
         }
     }
 
+    /**
+     * 根据得到的容器宽高和子 View 的宽高比例更改子 View 的布局参数
+     *
+     * @param measuredWidth
+     * @param measuredHeight
+     */
+    private void changeChildViewLayoutParams(int measuredWidth, int measuredHeight) {
+        int childCount = viewGroup.getChildCount();
+        View childView;
+        IPercentLayoutParams lp;
+        PercentInfo childPercentInfo;
+        float childSize;
+        float leftSize, topSize, rightSize, bottomSize;
+        for (int i = 0; i < childCount; i++) {
+            childView = viewGroup.getChildAt(i);
+            lp = (IPercentLayoutParams) childView.getLayoutParams();
+            childPercentInfo = lp.getPercentInfo();
+            if (childPercentInfo == null) {
+                continue;
+            }
+            // 处理宽高
+            if ((childSize = childPercentInfo.getWidthValue(measuredWidth, measuredHeight)) > 0) {
+                lp.setWidth((int) childSize);
+            }
+            if ((childSize = childPercentInfo.getHeightValue(measuredWidth, measuredHeight)) > 0) {
+                lp.setHeight((int) childSize);
+            }
+            // 处理 Margin
+            if ((childSize = childPercentInfo.getMarginLeftValue(measuredWidth, measuredHeight)) > 0) {
+                lp.setMarginLeft((int) childSize);
+            }
+            if ((childSize = childPercentInfo.getMarginTopValue(measuredWidth, measuredHeight)) > 0) {
+                lp.setMarginTop((int) childSize);
+            }
+            if ((childSize = childPercentInfo.getMarginRightValue(measuredWidth, measuredHeight)) > 0) {
+                lp.setMarginRight((int) childSize);
+            }
+            if ((childSize = childPercentInfo.getMarginBottomValue(measuredWidth, measuredHeight)) > 0) {
+                lp.setMarginBottom((int) childSize);
+            }
+            // 处理 Padding
+            leftSize = filterPaddingValue(
+                    childPercentInfo.getPaddingLeftValue(measuredWidth, measuredHeight),
+                    childView.getPaddingLeft());
+            topSize = filterPaddingValue(
+                    childPercentInfo.getPaddingTopValue(measuredWidth, measuredHeight),
+                    childView.getPaddingTop());
+            rightSize = filterPaddingValue(
+                    childPercentInfo.getPaddingRightValue(measuredWidth, measuredHeight),
+                    childView.getPaddingRight());
+            bottomSize = filterPaddingValue(
+                    childPercentInfo.getPaddingBottomValue(measuredWidth, measuredHeight),
+                    childView.getPaddingBottom());
+            lp.setViewPadding(childView, (int) leftSize, (int) topSize, (int) rightSize, (int) bottomSize);
+        }
+    }
+
+    private float filterPaddingValue(float... paddingValues) {
+        if (paddingValues != null) {
+            for (float padding : paddingValues) {
+                if (padding != 0) {
+                    return padding;
+                }
+            }
+        }
+        return 0;
+    }
 }

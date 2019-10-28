@@ -9,6 +9,7 @@
 
     <com.vane.percent_layout.PercentLinearLayout
         android:orientation="vertical"
+        android:background="@android:color/holo_blue_dark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <TextView
@@ -16,16 +17,18 @@
             android:layout_height="wrap_content"
             android:text="Hello"
             android:background="@color/colorAccent"
-            app:width_percent="1"
-            app:height_percent="0.5"/>
+            app:margin_percent="0.1w"
+            app:width_percent="1w"
+            app:height_percent="0.5h"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hello"
             android:background="@color/colorPrimary"
-            app:width_percent="1"
-            app:height_percent="1"/>
+            app:padding_percent="0.1w"
+            app:width_percent="1w"
+            app:height_percent="1h"/>
     </com.vane.percent_layout.PercentLinearLayout>
 
 </FrameLayout>

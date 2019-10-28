@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="PercentLayout_Layout">
-        <attr name="width_percent" format="float" />
-        <attr name="height_percent" format="float" />
+        <attr name="width_percent" format="string" />
+        <attr name="height_percent" format="string" />
+        <attr name="margin_percent" format="string" />
+        <attr name="margin_left_percent" format="string" />
+        <attr name="margin_top_percent" format="string" />
+        <attr name="margin_right_percent" format="string" />
+        <attr name="margin_bottom_percent" format="string" />
+        <attr name="padding_percent" format="string" />
+        <attr name="padding_left_percent" format="string" />
+        <attr name="padding_top_percent" format="string" />
+        <attr name="padding_right_percent" format="string" />
+        <attr name="padding_bottom_percent" format="string" />
     </declare-styleable>
 </resources>
