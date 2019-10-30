@@ -15,7 +15,7 @@ buildscript {
 // 输入 dpadapter gradle 插件需要的数据
 dimenGenerateInfo {
     /* 要适配的手机屏幕尺寸宽度 dp 值 */
-    screenDp 380
+    screenDp 392
     /* 设计稿的尺寸宽度 dp 值 */
     designerDp 360
 }
