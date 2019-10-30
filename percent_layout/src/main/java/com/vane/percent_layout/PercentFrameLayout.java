@@ -128,13 +128,11 @@ public class PercentFrameLayout extends FrameLayout implements IPercentLayout {
 
         @Override
         public void setWidth(int width) {
-            sourceWidth = this.width;
             this.width = width;
         }
 
         @Override
         public void setHeight(int height) {
-            sourceHeight = this.height;
             this.height = height;
         }
 

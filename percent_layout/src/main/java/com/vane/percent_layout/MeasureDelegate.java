@@ -72,9 +72,11 @@ public class MeasureDelegate {
             }
             // 处理宽高
             if ((childSize = childPercentInfo.getWidthValue(measuredWidth, measuredHeight)) > 0) {
+                Log.d(TAG, "got child view width: " + childSize);
                 lp.setWidth((int) childSize);
             }
             if ((childSize = childPercentInfo.getHeightValue(measuredWidth, measuredHeight)) > 0) {
+                Log.d(TAG, "got child view height: " + childSize);
                 lp.setHeight((int) childSize);
             }
             // 处理 Margin
