@@ -153,18 +153,21 @@ public class PercentInfo {
         percentStr = percentStr.trim();
         int len = percentStr.length();
         String floatStr;
+        // 符号位，占宽度比为 1 ，高度比为 -1，默认为占宽度比
+        int symbol = 1;
         if (len > 0) {
             // 判断是否以 w/h 结尾，例：0.5w, 0.5h
             // 如果既不以 w 也不以 h 结尾，则默认为 w，即占宽度的百分比
             if ((Character.toLowerCase(percentStr.charAt(len - 1))) == WIDTH_CHARACTER) {
                 floatStr = percentStr.substring(0, len - 1);
             } else if ((Character.toLowerCase(percentStr.charAt(len - 1))) == HEIGHT_CHARACTER) {
+                symbol = -1;
                 floatStr = percentStr.substring(0, len - 1);
             } else {
                 floatStr = percentStr;
             }
             try {
-                return Float.parseFloat(floatStr);
+                return symbol * Float.parseFloat(floatStr);
             } catch (Exception e) {
                 e.printStackTrace();
                 return 0;
