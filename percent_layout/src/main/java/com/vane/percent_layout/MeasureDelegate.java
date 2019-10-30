@@ -2,6 +2,7 @@ package com.vane.percent_layout;
 
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 
 import static android.view.View.MeasureSpec;
 
@@ -22,6 +23,9 @@ public class MeasureDelegate {
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
+        Log.d(TAG, "got width: " + width + ", height: " + height +
+                ", widthMode: " + widthMode + ", heightMode: " + heightMode);
+        printChildViewLayoutParams();
         boolean isMeasured = false;
         // 如果宽度和高度有一个模式为 AT_MOST，则使用父类的测量方法，先确定 ViewGroup 的宽高
         if (widthMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.AT_MOST ||
@@ -42,6 +46,8 @@ public class MeasureDelegate {
         } else {
             viewGroup.callSuperOnMeasure(gotWidthMeasureSpec, gotHeightMeasureSpec);
         }
+        // 测量完成后恢复子 View 的布局参数，以免影响下一次 measure
+        restoreChildViewLayoutParams();
     }
 
     /**
@@ -98,6 +104,29 @@ public class MeasureDelegate {
                     childPercentInfo.getPaddingBottomValue(measuredWidth, measuredHeight),
                     childView.getPaddingBottom());
             lp.setViewPadding(childView, (int) leftSize, (int) topSize, (int) rightSize, (int) bottomSize);
+        }
+    }
+
+    /**
+     * 恢复子 View 的布局参数，以免影响下一次 measure
+     */
+    private void restoreChildViewLayoutParams() {
+        int childCount = viewGroup.getChildCount();
+        IPercentLayoutParams lp;
+        for (int i = 0; i < childCount; i++) {
+            lp = (IPercentLayoutParams) viewGroup.getChildAt(i).getLayoutParams();
+            lp.restoreWidthHeight();
+        }
+    }
+
+    private void printChildViewLayoutParams() {
+        int childCount = viewGroup.getChildCount();
+        View childView;
+        ViewGroup.LayoutParams lp;
+        for (int i = 0; i < childCount; i++) {
+            childView = viewGroup.getChildAt(i);
+            lp = childView.getLayoutParams();
+            Log.d(TAG, "childView: " + childView + ", lp.wdith: " + lp.width + ", lp.height: " + lp.height);
         }
     }
 

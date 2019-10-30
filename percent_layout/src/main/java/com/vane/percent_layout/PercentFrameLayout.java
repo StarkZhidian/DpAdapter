@@ -65,40 +65,56 @@ public class PercentFrameLayout extends FrameLayout implements IPercentLayout {
     public static class LayoutParams extends FrameLayout.LayoutParams implements IPercentLayoutParams {
 
         private PercentInfo info;
+        private int sourceWidth;
+        private int sourceHeight;
 
         public LayoutParams(@NonNull Context c, @Nullable AttributeSet attrs) {
             super(c, attrs);
             info = PercentInfo.makeFromLayoutAttrs(c, attrs);
+            sourceWidth = width;
+            sourceHeight = height;
         }
 
         public LayoutParams(int width, int height) {
             super(width, height);
             info = new PercentInfo();
+            sourceWidth = width;
+            sourceHeight = height;
         }
 
         public LayoutParams(int width, int height, int gravity) {
             super(width, height, gravity);
             info = new PercentInfo();
+            sourceWidth = width;
+            sourceHeight = height;
         }
 
         public LayoutParams(@NonNull ViewGroup.LayoutParams source) {
             super(source);
             info = new PercentInfo();
+            sourceWidth = width;
+            sourceHeight = height;
         }
 
         public LayoutParams(@NonNull MarginLayoutParams source) {
             super(source);
             info = new PercentInfo();
+            sourceWidth = width;
+            sourceHeight = height;
         }
 
         public LayoutParams(@NonNull FrameLayout.LayoutParams source) {
             super(source);
             info = new PercentInfo();
+            sourceWidth = width;
+            sourceHeight = height;
         }
 
         public LayoutParams(@NonNull LayoutParams source) {
             super(source);
             info = new PercentInfo(source.info);
+            sourceWidth = width;
+            sourceHeight = height;
         }
 
         public PercentInfo getInfo() {
@@ -112,12 +128,20 @@ public class PercentFrameLayout extends FrameLayout implements IPercentLayout {
 
         @Override
         public void setWidth(int width) {
+            sourceWidth = this.width;
             this.width = width;
         }
 
         @Override
         public void setHeight(int height) {
+            sourceHeight = this.height;
             this.height = height;
+        }
+
+        @Override
+        public void restoreWidthHeight() {
+            width = sourceWidth;
+            height = sourceHeight;
         }
 
         @Override

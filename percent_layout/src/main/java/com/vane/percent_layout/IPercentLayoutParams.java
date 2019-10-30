@@ -10,6 +10,8 @@ public interface IPercentLayoutParams {
 
     void setHeight(int height);
 
+    void restoreWidthHeight();
+
     void setMarginLeft(int marginLeft);
 
     void setMarginTop(int marginTop);

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -71,29 +72,43 @@ public class PercentLinearLayout extends LinearLayout implements IPercentLayout 
     public static class LayoutParams extends LinearLayout.LayoutParams implements IPercentLayoutParams {
 
         private PercentInfo percentInfo;
+        private int sourceWidth;
+        private int sourceHeight;
 
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
             percentInfo = PercentInfo.makeFromLayoutAttrs(c, attrs);
             Log.d(TAG, "Got percentInfo: " + percentInfo.toString());
+            sourceWidth = width;
+            sourceHeight = height;
         }
 
         public LayoutParams(int width, int height) {
-            this(width, height, 0);
+            super(width, height);
+            percentInfo = new PercentInfo();
+            sourceWidth = width;
+            sourceHeight = height;
         }
 
         public LayoutParams(int width, int height, float weight) {
             super(width, height, weight);
+            percentInfo = new PercentInfo();
+            sourceWidth = width;
+            sourceHeight = height;
         }
 
         public LayoutParams(LinearLayout.LayoutParams source) {
             super(source);
             percentInfo = new PercentInfo();
+            sourceWidth = width;
+            sourceHeight = height;
         }
 
         public LayoutParams(LayoutParams source) {
             super(source);
             percentInfo = new PercentInfo(source.getPercentInfo());
+            sourceWidth = width;
+            sourceHeight = height;
         }
 
         @Override
@@ -103,12 +118,20 @@ public class PercentLinearLayout extends LinearLayout implements IPercentLayout 
 
         @Override
         public void setWidth(int width) {
+            sourceWidth = this.width;
             this.width = width;
         }
 
         @Override
         public void setHeight(int height) {
+            sourceHeight = this.height;
             this.height = height;
+        }
+
+        @Override
+        public void restoreWidthHeight() {
+            width = sourceWidth;
+            height = sourceHeight;
         }
 
         @Override
